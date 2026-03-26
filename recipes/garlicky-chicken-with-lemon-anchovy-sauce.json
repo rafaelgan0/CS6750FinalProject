@@ -1,0 +1,53 @@
+{
+  "title": "Garlicky Chicken With Lemon-Anchovy Sauce",
+  "author": "Melissa Clark",
+  "source": {
+    "name": "NYT Cooking",
+    "url": "https://cooking.nytimes.com/recipes/1015290-garlicky-chicken-with-lemon-anchovy-sauce"
+  },
+  "servings": 4,
+  "total_time_minutes": 25,
+  "shorts_ingredients": [
+    "Chicken thighs",
+    "Garlic",
+    "Olive oil",
+    "Anchovy fillets",
+    "Capers",
+    "Chile flakes",
+    "Lemon",
+    "Parsley",
+    "Salt",
+    "Black pepper"
+  ],
+  "ingredients": [
+    { "amount": 1.25, "unit": "pounds", "item": "boneless, skinless chicken thighs" },
+    { "amount": 1, "unit": "teaspoon", "item": "coarse kosher salt" },
+    { "amount": null, "unit": null, "item": "freshly ground black pepper" },
+    { "amount": 6, "unit": "cloves", "item": "garlic, smashed and peeled" },
+    { "amount": 0.25, "unit": "cup", "item": "extra-virgin olive oil" },
+    { "amount": 5, "unit": null, "item": "anchovy fillets" },
+    { "amount": 2, "unit": "tablespoons", "item": "drained capers, patted dry" },
+    { "amount": 1, "unit": "large pinch", "item": "chile flakes" },
+    { "amount": 1, "unit": null, "item": "lemon, halved" },
+    { "amount": null, "unit": null, "item": "fresh chopped parsley, for serving" }
+  ],
+  "steps": [
+    {
+      "step_number": 1,
+      "text": "Heat oven to 350°F (175°C). Season chicken thighs with salt and pepper and let rest while you prepare the anchovy-garlic oil. Mince one garlic clove and set aside for later. In a large ovenproof skillet over medium-high heat, add the olive oil. When hot, add the smashed whole garlic cloves, anchovies, capers, and chile flakes. Cook, stirring to break up anchovies, until garlic browns at edges and anchovies dissolve, about 3–5 minutes."
+    },
+    {
+      "step_number": 2,
+      "text": "Add chicken thighs and cook until nicely browned on one side, about 5–7 minutes. Flip thighs, place skillet in the oven, and cook another 5–10 minutes, until chicken is cooked through."
+    },
+    {
+      "step_number": 3,
+      "text": "When chicken is done, transfer thighs to a plate (watch the hot pan handle). Put the skillet back on the heat. Add minced garlic and the juice from one lemon half; cook about 30 seconds, scraping up the browned bits from the bottom of the pan. Return chicken to the pan and cook in the sauce another 15–30 seconds."
+    },
+    {
+      "step_number": 4,
+      "text": "Transfer everything to a serving platter. Squeeze the remaining lemon half over the chicken and garnish with chopped parsley. Serve."
+    }
+  ]
+}
+

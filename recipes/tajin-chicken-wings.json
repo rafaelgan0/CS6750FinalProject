@@ -1,0 +1,47 @@
+{
+  "title": "Tajín Chicken Wings",
+  "author": "NYT Cooking",
+  "source": {
+    "name": "NYT Cooking",
+    "url": "http://cooking.nytimes.com/recipes/1026581-tajin-chicken-wings"
+  },
+  "servings": 4,
+  "total_time_minutes": 60,
+  "shorts_ingredients": [
+    "Tajin",
+    "Baking Powder",
+    "Salt",
+    "Chicken pieces",
+    "Butter",
+    "Smoked Paprika",
+    "Lemons",
+    "Garlic",
+    "Serrano"
+  ],
+  "ingredients": [
+    { "amount": 2.5, "unit": "tablespoons", "item": "Tajín seasoning" },
+    { "amount": 1, "unit": "tablespoon", "item": "baking powder" },
+    { "amount": null, "unit": null, "item": "kosher salt" },
+    { "amount": 3, "unit": "pounds", "item": "chicken wings" },
+    { "amount": 4, "unit": "tablespoons", "item": "unsalted butter" },
+    { "amount": 0.5, "unit": "teaspoon", "item": "smoked paprika" },
+    { "amount": null, "unit": null, "item": "juice from 1 lime" },
+    { "amount": 1, "unit": "clove", "item": "garlic" },
+    { "amount": 0.5, "unit": null, "item": "serrano chile" }
+  ],
+  "steps": [
+    {
+      "step_number": 1,
+      "text": "Heat the oven to 425 degrees. Toss wings with Tajín seasoning, baking powder, and salt. Roast."
+    },
+    {
+      "step_number": 2,
+      "text": "Roast until crisp, turning wings halfway through."
+    },
+    {
+      "step_number": 3,
+      "text": "Melt butter and Tajín seasoning with paprika. Stir in lime juice, garlic, and serrano; toss wings in sauce."
+    }
+  ]
+}
+

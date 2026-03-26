@@ -1,0 +1,48 @@
+{
+  "title": "Chicken Pesto Meatballs",
+  "author": "Dan Pelosi",
+  "source": {
+    "name": "NYT Cooking",
+    "url": "https://cooking.nytimes.com/recipes/1025376-chicken-pesto-meatballs"
+  },
+  "servings": 15,
+  "total_time_minutes": 25,
+  "shorts_ingredients": [
+    "Pesto",
+    "Bread Crumbs",
+    "Eggs",
+    "Salt",
+    "Black Pepper",
+    "Red Pepper Flakes",
+    "Chicken pieces",
+    "Parmesan"
+  ],
+  "ingredients": [
+    { "amount": 0.75, "unit": "cup", "item": "pesto" },
+    { "amount": 0.5, "unit": "cup", "item": "panko bread crumbs" },
+    { "amount": 1, "unit": "large", "item": "egg" },
+    { "amount": null, "unit": null, "item": "salt and black pepper" },
+    { "amount": null, "unit": null, "item": "red-pepper flakes" },
+    { "amount": 1, "unit": "pound", "item": "ground chicken" },
+    { "amount": 0.5, "unit": "cup", "item": "grated Parmesan" }
+  ],
+  "steps": [
+    {
+      "step_number": 1,
+      "text": "Heat the oven to 400 degrees."
+    },
+    {
+      "step_number": 2,
+      "text": "Mix pesto, panko, egg, salt, black pepper, and red-pepper flakes. Stir in ground chicken and Parmesan."
+    },
+    {
+      "step_number": 3,
+      "text": "Form into 15 meatballs and bake for 10 minutes. Rest 5 minutes."
+    },
+    {
+      "step_number": 4,
+      "text": "Serve with extra pesto (or with pesto-coated pasta)."
+    }
+  ]
+}
+

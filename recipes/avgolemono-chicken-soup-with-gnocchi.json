@@ -1,0 +1,54 @@
+{
+  "title": "Avgolemono Chicken Soup With Gnocchi",
+  "author": "Carolina Gelen",
+  "source": {
+    "name": "NYT Cooking",
+    "url": "https://cooking.nytimes.com/recipes/1026348-avgolemono-chicken-soup-with-gnocchi"
+  },
+  "servings": 6,
+  "total_time_minutes": 20,
+  "shorts_ingredients": [
+    "Chicken Stock",
+    "Chicken pieces",
+    "Lemons",
+    "Salt",
+    "Black Pepper",
+    "Gnocchi",
+    "Egg Yolks",
+    "Garlic",
+    "Dill"
+  ],
+  "ingredients": [
+    { "amount": 2, "unit": "quarts", "item": "chicken stock" },
+    { "amount": 3, "unit": "cups", "item": "torn rotisserie chicken" },
+    { "amount": 3, "unit": "medium", "item": "lemons" },
+    { "amount": null, "unit": null, "item": "salt and black pepper" },
+    { "amount": 1, "unit": "pound", "item": "gnocchi" },
+    { "amount": 5, "unit": null, "item": "egg yolks" },
+    { "amount": 4, "unit": "cloves", "item": "garlic" },
+    { "amount": null, "unit": null, "item": "fresh dill, for garnish" }
+  ],
+  "steps": [
+    {
+      "step_number": 1,
+      "text": "Simmer chicken stock with torn chicken and lemon zest; season with salt and black pepper."
+    },
+    {
+      "step_number": 2,
+      "text": "Add gnocchi and simmer briefly until tender."
+    },
+    {
+      "step_number": 3,
+      "text": "Whisk egg yolks with lemon juice and garlic, then temper with hot stock."
+    },
+    {
+      "step_number": 4,
+      "text": "Stir the tempered yolks back into the soup and turn off the heat."
+    },
+    {
+      "step_number": 5,
+      "text": "Serve with extra lemon zest, black pepper, and dill."
+    }
+  ]
+}
+

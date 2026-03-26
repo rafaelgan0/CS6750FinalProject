@@ -1,0 +1,130 @@
+{
+  "title": "Marry Me Chicken",
+  "author": "Naz Deravian",
+  "source": {
+    "name": "NYT Cooking",
+    "url": "https://cooking.nytimes.com/recipes/1024503-marry-me-chicken"
+  },
+  "servings": 4,
+  "total_time_minutes": 60,
+  "shorts_ingredients": [
+    "Chicken breasts",
+    "Salt",
+    "Black pepper",
+    "Flour",
+    "Olive oil",
+    "Butter",
+    "Garlic",
+    "Tomato paste",
+    "Oregano",
+    "Chile flakes",
+    "Chicken stock",
+    "Heavy cream",
+    "Parmesan",
+    "Sun-dried tomatoes",
+    "Basil"
+  ],
+  "ingredients": [
+    {
+      "amount": 3,
+      "unit": "large",
+      "item": "boneless, skinless chicken breasts, patted dry"
+    },
+    {
+      "amount": null,
+      "unit": null,
+      "item": "kosher salt and black pepper"
+    },
+    {
+      "amount": 0.25,
+      "unit": "cup",
+      "item": "all-purpose flour"
+    },
+    {
+      "amount": 3,
+      "unit": "tablespoons",
+      "item": "extra-virgin olive oil, plus more as needed"
+    },
+    {
+      "amount": 3,
+      "unit": "tablespoons",
+      "item": "unsalted butter"
+    },
+    {
+      "amount": 3,
+      "unit": "cloves",
+      "item": "garlic"
+    },
+    {
+      "amount": 1,
+      "unit": "tablespoon",
+      "item": "tomato paste"
+    },
+    {
+      "amount": 0.5,
+      "unit": "teaspoon",
+      "item": "dried oregano"
+    },
+    {
+      "amount": null,
+      "unit": null,
+      "item": "chile flakes, to taste"
+    },
+    {
+      "amount": 1,
+      "unit": "cup",
+      "item": "low-sodium chicken stock"
+    },
+    {
+      "amount": 0.5,
+      "unit": "to 0.75",
+      "item": "heavy cream"
+    },
+    {
+      "amount": 0.5,
+      "unit": "cup",
+      "item": "grated Parmesan"
+    },
+    {
+      "amount": 0.333,
+      "unit": "cup",
+      "item": "sun-dried tomatoes"
+    },
+    {
+      "amount": null,
+      "unit": null,
+      "item": "fresh basil, for serving"
+    }
+  ],
+  "steps": [
+    {
+      "step_number": 1,
+      "text": "Pat the chicken dry. Season well with salt and pepper (if you’re using chicken breasts, cut them into cutlets for even cooking)."
+    },
+    {
+      "step_number": 2,
+      "text": "Dust the chicken lightly with flour and shake off the excess."
+    },
+    {
+      "step_number": 3,
+      "text": "Heat olive oil in a large pan; add butter. Sear the chicken over medium-high heat until golden, then flip and cook until browned and cooked through. Remove to a plate."
+    },
+    {
+      "step_number": 4,
+      "text": "Lower the heat and cook garlic until fragrant. Stir in tomato paste until it darkens slightly, then add oregano and red-pepper flakes."
+    },
+    {
+      "step_number": 5,
+      "text": "Pour in chicken stock and simmer, scraping up browned bits, until the liquid reduces by about half."
+    },
+    {
+      "step_number": 6,
+      "text": "Stir in the cream and warm until the sauce thickens. Add grated Parmesan and sun-dried tomatoes; adjust seasoning as needed."
+    },
+    {
+      "step_number": 7,
+      "text": "Return the chicken to the pan just to warm through. Finish with fresh basil and serve."
+    }
+  ]
+}
+

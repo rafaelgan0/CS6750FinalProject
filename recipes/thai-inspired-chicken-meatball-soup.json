@@ -1,0 +1,63 @@
+{
+  "title": "Thai-Inspired Chicken Meatball Soup",
+  "author": "NYT Cooking",
+  "source": {
+    "name": "NYT Cooking",
+    "url": "https://cooking.nytimes.com/recipes/1020631-thai-inspired-chicken-meatball-soup"
+  },
+  "servings": 6,
+  "total_time_minutes": 30,
+  "shorts_ingredients": [
+    "Ginger",
+    "Garlic",
+    "Jalapeno",
+    "Chicken pieces",
+    "Cilantro",
+    "Fish Sauce",
+    "Salt",
+    "Chicken Stock",
+    "Coconut Milk",
+    "Spinach",
+    "Lemons",
+    "Rice"
+  ],
+  "ingredients": [
+    { "amount": 1, "unit": "piece", "item": "fresh ginger" },
+    { "amount": 6, "unit": "cloves", "item": "garlic" },
+    { "amount": 1, "unit": null, "item": "jalapeno" },
+    { "amount": 2, "unit": "pounds", "item": "ground chicken" },
+    { "amount": 1, "unit": "bunch", "item": "cilantro" },
+    { "amount": 3, "unit": "tablespoons", "item": "fish sauce" },
+    { "amount": null, "unit": null, "item": "kosher salt" },
+    { "amount": 2, "unit": "tablespoons", "item": "vegetable or coconut oil" },
+    { "amount": 2, "unit": "cups", "item": "chicken broth" },
+    { "amount": 1, "unit": "14-ounce can", "item": "full-fat coconut milk" },
+    { "amount": 0.5, "unit": "teaspoon", "item": "granulated sugar" },
+    { "amount": 5, "unit": "ounces", "item": "baby spinach" },
+    { "amount": 1, "unit": "tablespoon", "item": "lime juice" },
+    { "amount": null, "unit": null, "item": "rice, for serving" }
+  ],
+  "steps": [
+    {
+      "step_number": 1,
+      "text": "Grate ginger, garlic, and jalapeno; mix with chicken, cilantro, fish sauce, and salt. Form into meatballs."
+    },
+    {
+      "step_number": 2,
+      "text": "Brown meatballs in oil until golden."
+    },
+    {
+      "step_number": 3,
+      "text": "Simmer ginger-garlic mixture with chicken broth, coconut milk, sugar, and fish sauce. Add meatballs and cook through."
+    },
+    {
+      "step_number": 4,
+      "text": "Stir in spinach and lime juice."
+    },
+    {
+      "step_number": 5,
+      "text": "Serve over rice with cilantro and lime wedges."
+    }
+  ]
+}
+

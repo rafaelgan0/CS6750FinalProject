@@ -1,0 +1,45 @@
+{
+  "title": "Skillet Chicken With Tomatoes, Pancetta and Mozzarella",
+  "author": "Melissa Clark",
+  "source": {
+    "name": "NYT Cooking",
+    "url": "https://cooking.nytimes.com/recipes/1017910-skillet-chicken-with-tomatoes-pancetta-and-mozzarella"
+  },
+  "servings": 4,
+  "total_time_minutes": 45,
+  "shorts_ingredients": [
+    "Chicken pieces",
+    "Salt",
+    "Black pepper",
+    "Olive oil",
+    "Pancetta",
+    "Garlic",
+    "Anchovy fillets",
+    "Red pepper flakes",
+    "Canned tomatoes",
+    "Basil",
+    "Mozzarella"
+  ],
+  "ingredients": [
+    { "amount": 3.5, "unit": "pounds", "item": "bone-in chicken pieces (or a whole chicken cut into pieces)" },
+    { "amount": 2, "unit": "teaspoons", "item": "kosher salt" },
+    { "amount": 1, "unit": "teaspoon", "item": "black pepper" },
+    { "amount": 1, "unit": "tablespoon", "item": "extra-virgin olive oil" },
+    { "amount": 5, "unit": "ounces", "item": "pancetta, diced" },
+    { "amount": 3, "unit": "cloves", "item": "garlic, thinly sliced" },
+    { "amount": 2, "unit": null, "item": "anchovy fillets" },
+    { "amount": 0.25, "unit": "teaspoon", "item": "red pepper flakes" },
+    { "amount": 1, "unit": "28-ounce can", "item": "whole plum tomatoes" },
+    { "amount": 1, "unit": "sprig", "item": "basil, plus more chopped basil for serving" },
+    { "amount": 8, "unit": "ounces", "item": "bocconcini, halved (or mozzarella cut into pieces)" }
+  ],
+  "steps": [
+    { "step_number": 1, "text": "Heat oven to 400°F. Pat chicken dry and season with salt and pepper." },
+    { "step_number": 2, "text": "In a large ovenproof skillet, warm oil over medium-high heat. Add pancetta and cook until browned. Transfer pancetta to a plate." },
+    { "step_number": 3, "text": "Add chicken to the skillet and sear until browned on all sides. Transfer chicken to a plate. Pour off all but about 1 tablespoon fat." },
+    { "step_number": 4, "text": "Add garlic, anchovy and red pepper flakes; cook briefly. Stir in tomatoes and basil and cook until the sauce thickens." },
+    { "step_number": 5, "text": "Return chicken to skillet and transfer to the oven. Bake uncovered until chicken is cooked through." },
+    { "step_number": 6, "text": "Scatter bocconcini/mozzarella over the top. Broil briefly until melted and bubbling. Garnish with pancetta and basil." }
+  ]
+}
+

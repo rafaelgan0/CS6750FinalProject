@@ -1,0 +1,88 @@
+{
+  "title": "Crispy Lemon Chicken Cutlets With Salmoriglio Sauce",
+  "author": "Anna Francese Gass",
+  "source": {
+    "name": "NYT Cooking",
+    "url": "https://cooking.nytimes.com/recipes/1023865-crispy-lemon-chicken-cutlets-with-salmoriglio-sauce"
+  },
+  "servings": 4,
+  "total_time_minutes": 25,
+  "shorts_ingredients": [
+    "Chicken breasts",
+    "Salt",
+    "Black pepper",
+    "Lemons",
+    "Eggs",
+    "Parsley",
+    "Bread crumbs",
+    "Flour",
+    "Parmesan",
+    "Oregano",
+    "Olive oil",
+    "Garlic"
+  ],
+  "ingredients": [
+    {
+      "amount": 1.5,
+      "unit": "pounds",
+      "item": "boneless chicken breasts, about 4, halved and pounded 1/4-inch thick"
+    },
+    { "amount": null, "unit": null, "item": "Kosher salt and pepper" },
+    { "amount": 3, "unit": null, "item": "large lemons" },
+    { "amount": 2, "unit": null, "item": "eggs, beaten" },
+    {
+      "amount": 0.5,
+      "unit": "cup",
+      "item": "very finely chopped flat-leaf Italian parsley"
+    },
+    { "amount": 1.25, "unit": "cups", "item": "bread crumbs" },
+    { "amount": 0.25, "unit": "cup", "item": "all-purpose flour" },
+    {
+      "amount": 0.25,
+      "unit": "cup",
+      "item": "finely grated Parmigiano-Reggiano"
+    },
+    { "amount": 2, "unit": "teaspoons", "item": "dried oregano" },
+    {
+      "amount": 0.33,
+      "unit": "cup",
+      "item": "extra-virgin olive oil, plus more for frying"
+    },
+    { "amount": 1, "unit": "clove", "item": "garlic clove, minced" }
+  ],
+  "steps": [
+    {
+      "step_number": 1,
+      "text": "Pat chicken dry, then season liberally with salt and pepper on both sides."
+    },
+    {
+      "step_number": 2,
+      "text": "Zest 1 lemon, reserving the zest for the bread crumbs, then halve the lemon and squeeze all its juice into a medium bowl. Add the eggs to the juice and beat to combine. Add the seasoned chicken and coat it. Let rest while you make the sauce and bread crumb mixture."
+    },
+    {
+      "step_number": 3,
+      "text": "Prepare the sauce: In a medium bowl, combine the zest and juice of the remaining lemons; stir in parsley. Set aside."
+    },
+    {
+      "step_number": 4,
+      "text": "Prepare the bread crumbs: In a shallow dish, combine bread crumbs, flour, cheese, oregano and the remaining parsley. Add the reserved lemon zest and press it into the bread crumb mixture."
+    },
+    {
+      "step_number": 5,
+      "text": "Coat chicken: press each chicken piece into the bread crumb mixture and place on a sheet pan."
+    },
+    {
+      "step_number": 6,
+      "text": "Fry: Heat olive oil in a large skillet over medium-high. Cook in batches until golden brown, about 2 minutes per side. Transfer to a serving dish and sprinkle immediately with salt."
+    },
+    {
+      "step_number": 7,
+      "text": "Prepare garlic oil: heat olive oil in a small saucepan on medium heat, add minced garlic, and cook 1 to 2 minutes until sizzles but not browned. Remove and let cool."
+    },
+    {
+      "step_number": 8,
+      "text": "Finish: slowly pour garlic oil into the lemon and parsley mixture and whisk to combine. Spoon salmoriglio sauce over chicken before serving."
+    }
+  ]
+}
+
