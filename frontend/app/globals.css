@@ -47,3 +47,11 @@ body {
 .group:hover .icon-shake-x {
   animation: icon-shake-x 0.36s ease-in-out;
 }
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

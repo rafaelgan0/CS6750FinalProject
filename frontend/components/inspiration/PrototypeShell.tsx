@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import type { RecipeWithSlug } from "@/lib/recipes";
 import type { MediaForRecipe } from "@/lib/media";
@@ -75,6 +75,24 @@ export default function PrototypeShell({ cards }: { cards: Card[] }) {
   const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel>(
     "intermediate",
   );
+  const [selectedModel, setSelectedModel] = useState("deepseek-r1:latest");
+  const [availableModels, setAvailableModels] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetch("/api/models")
+      .then((r) => r.json())
+      .then((data: { models?: string[] }) => {
+        const models = data.models ?? [];
+        if (models.length > 0) {
+          setAvailableModels(models);
+          if (!models.includes(selectedModel) && models[0]) {
+            setSelectedModel(models[0]);
+          }
+        }
+      })
+      .catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const sortedCards = useMemo(() => {
     // Lightweight scoring to order recipes by how likely they fit this moment:
@@ -242,11 +260,11 @@ export default function PrototypeShell({ cards }: { cards: Card[] }) {
             available so you can track what you have.
           </p>
 
-        <div className="mt-4 flex flex-col gap-2">
+        <div className="mt-4 flex flex-row gap-2">
           <button
             type="button"
             onClick={() => setOverlayMode("overlay1")}
-            className={`w-full text-left rounded-lg px-3 py-2 text-sm font-semibold transition ${
+            className={`flex-1 text-center rounded-lg px-3 py-2 text-sm font-semibold transition ${
               overlayMode === "overlay1"
                 ? "bg-white text-black"
                 : "bg-white/10 text-white hover:bg-white/15"
@@ -257,7 +275,7 @@ export default function PrototypeShell({ cards }: { cards: Card[] }) {
           <button
             type="button"
             onClick={() => setOverlayMode("overlay2")}
-            className={`w-full text-left rounded-lg px-3 py-2 text-sm font-semibold transition ${
+            className={`flex-1 text-center rounded-lg px-3 py-2 text-sm font-semibold transition ${
               overlayMode === "overlay2"
                 ? "bg-white text-black"
                 : "bg-white/10 text-white hover:bg-white/15"
@@ -266,6 +284,25 @@ export default function PrototypeShell({ cards }: { cards: Card[] }) {
             Overlay 2
           </button>
         </div>
+
+        <label className="mt-3 text-xs font-semibold text-white/80">
+          LLM Model
+          <select
+            className="mt-1 w-full rounded-md bg-black/40 px-2 py-1.5 text-sm text-white outline-none ring-1 ring-white/10 focus:ring-white/25"
+            value={selectedModel}
+            onChange={(e) => setSelectedModel(e.target.value)}
+          >
+            {availableModels.length > 0 ? (
+              availableModels.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))
+            ) : (
+              <option value={selectedModel}>{selectedModel}</option>
+            )}
+          </select>
+        </label>
 
         <div className="mt-4 flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-white/10 bg-white/5 p-3">
           <label className="text-xs font-semibold text-white/80">
@@ -344,6 +381,7 @@ export default function PrototypeShell({ cards }: { cards: Card[] }) {
                     checkedItems={checkedItems}
                     timeAvailableMinutes={timeAvailableMinutes}
                     experienceLevel={experienceLevel}
+                    selectedModel={selectedModel}
                   />
                 ))}
               </div>

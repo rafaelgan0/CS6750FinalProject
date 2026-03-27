@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRight,
@@ -8,6 +8,8 @@ import {
   faChevronUp,
   faCheck,
   faCircleQuestion,
+  faComment,
+  faRightLeft,
   faShareNodes,
   faVolumeHigh,
   faVolumeXmark,
@@ -19,6 +21,7 @@ import type { MediaForRecipe } from "@/lib/media";
 import type { ExperienceLevel, OverlayMode } from "@/components/inspiration/types";
 import { OVERLAY2_GROUPS } from "@/components/inspiration/overlay2ChecklistData";
 import { useSound } from "@/components/inspiration/SoundContext";
+import ChatPanel from "@/components/inspiration/ChatPanel";
 
 function clamp01(n: number) {
   if (Number.isNaN(n)) return 0;
@@ -324,6 +327,7 @@ export default function ShortsFeedItem({
   checkedItems,
   timeAvailableMinutes,
   experienceLevel,
+  selectedModel,
 }: {
   recipe: RecipeWithSlug;
   media: MediaForRecipe;
@@ -331,6 +335,7 @@ export default function ShortsFeedItem({
   checkedItems: Record<string, boolean>;
   timeAvailableMinutes: number;
   experienceLevel: ExperienceLevel;
+  selectedModel: string;
 }) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -343,6 +348,7 @@ export default function ShortsFeedItem({
   const [isPlaying, setIsPlaying] = useState(false);
   const [needsUserGestureForSound, setNeedsUserGestureForSound] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [chatOpen, setChatOpen] = useState(false);
   const [acceptedSubstitutions, setAcceptedSubstitutions] = useState<
     Record<number, boolean>
   >({});
@@ -353,23 +359,61 @@ export default function ShortsFeedItem({
     mutedRef.current = muted;
   }, [muted]);
 
-  // Recipe overlay should pause the current video.
+  function pause() {
+    const v = videoRef.current;
+    if (!v) return;
+    v.pause();
+    setIsPlaying(false);
+  }
+
   useEffect(() => {
     if (!recipeOverlayOpen) return;
-    pause();
-    setRecipeIngredientsOpen(true);
+    queueMicrotask(() => {
+      pause();
+      setRecipeIngredientsOpen(true);
+    });
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setRecipeOverlayOpen(false);
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recipeOverlayOpen]);
+
+  const isOverlay1 = overlayMode === "overlay1";
+
+  useEffect(() => {
+    if (chatOpen) {
+      queueMicrotask(() => pause());
+    } else if (isInViewRef.current) {
+      queueMicrotask(() => void tryPlayWithSoundPreference());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chatOpen]);
+
+  useEffect(() => {
+    if (!chatOpen) return;
+    const root = rootRef.current;
+    if (!root) return;
+
+    const scrollParent = root.parentElement;
+    if (scrollParent) {
+      scrollParent.style.overflowY = "hidden";
+    }
+    return () => {
+      if (scrollParent) {
+        scrollParent.style.overflowY = "";
+      }
+    };
+  }, [chatOpen]);
+
+  const openChat = useCallback(() => setChatOpen(true), []);
+  const closeChat = useCallback(() => setChatOpen(false), []);
+
+  const videoFrameRef = useRef<HTMLDivElement | null>(null);
 
   const byline = useMemo(() => `By ${recipe.author}`, [recipe.author]);
   const meta = useMemo(() => `${recipe.total_time_minutes} min`, [recipe.total_time_minutes]);
-  const isOverlay1 = overlayMode === "overlay1";
 
   function estimateDifficultyScore() {
     const steps = recipe.steps?.length ?? 0;
@@ -530,13 +574,6 @@ export default function ShortsFeedItem({
     }
   }
 
-  function pause() {
-    const v = videoRef.current;
-    if (!v) return;
-    v.pause();
-    setIsPlaying(false);
-  }
-
   function togglePlay() {
     const v = videoRef.current;
     if (!v) return;
@@ -647,23 +684,25 @@ export default function ShortsFeedItem({
     return rows;
   })();
 
-  return (
-    <div ref={rootRef} className="relative h-dvh w-full snap-start bg-black">
-      <div
-        onClick={togglePlay}
-        className="absolute inset-0 w-full h-full"
-        role="button"
-        tabIndex={0}
-        aria-label={isPlaying ? "Pause video" : "Play video"}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            togglePlay();
-          }
-        }}
-      >
-        <div className="w-full h-full flex items-center justify-center">
-          <div
+  const videoContent = (
+    <div
+      onClick={togglePlay}
+      className="absolute inset-0 w-full h-full"
+      role="button"
+      tabIndex={0}
+      aria-label={isPlaying ? "Pause video" : "Play video"}
+      onKeyDown={(e) => {
+        const tag = (e.target as HTMLElement).tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          togglePlay();
+        }
+      }}
+    >
+      <div className="w-full h-full flex items-center justify-center">
+        <div
+            ref={videoFrameRef}
             className="relative mx-auto bg-black overflow-hidden"
             style={{
               aspectRatio: "9 / 16",
@@ -783,8 +822,11 @@ export default function ShortsFeedItem({
                             ? "text-amber-300"
                             : "text-rose-300";
 
-                      const icon =
-                        effectiveStatus === "available"
+                      const isAcceptedSubstitute =
+                        hasAcceptedSubstitution && availability.status === "substitution";
+                      const icon = isAcceptedSubstitute
+                        ? faRightLeft
+                        : effectiveStatus === "available"
                           ? faCheck
                           : effectiveStatus === "substitution"
                             ? faCircleQuestion
@@ -809,7 +851,7 @@ export default function ShortsFeedItem({
                               !hasAcceptedSubstitution
                                 ? "cursor-pointer"
                                 : ""
-                            }`}
+                            } w-full min-w-0`}
                           >
                             <FontAwesomeIcon
                               icon={icon}
@@ -821,13 +863,35 @@ export default function ShortsFeedItem({
                                     : ""
                               }`}
                             />
-                            <span>{effectiveName}</span>
+                            <span className="truncate">{effectiveName}</span>
                           </button>
                         </li>
                       );
                     })}
                   </ul>
                 </div>
+              </div>
+            ) : null}
+
+            {/* Sliding chat panel (Overlay 2 only) — slides from left */}
+            {!isOverlay1 ? (
+              <div
+                className="absolute inset-0 z-40 transition-transform duration-300 ease-out"
+                style={{
+                  transform: chatOpen ? "translateX(0)" : "translateX(-100%)",
+                  pointerEvents: chatOpen ? "auto" : "none",
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ChatPanel
+                  recipe={recipe}
+                  selectedModel={selectedModel}
+                  checkedItems={checkedItems}
+                  timeAvailableMinutes={timeAvailableMinutes}
+                  experienceLevel={experienceLevel}
+                  substitutions={substitutionByIngredientName}
+                  onClose={closeChat}
+                />
               </div>
             ) : null}
 
@@ -966,7 +1030,18 @@ export default function ShortsFeedItem({
                         ) : null}
                       </div>
 
-                      <div className="pointer-events-auto flex items-center">
+                      <div className="pointer-events-auto flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openChat();
+                          }}
+                          aria-label="Open chat"
+                          className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur hover:bg-white/25"
+                        >
+                          <FontAwesomeIcon icon={faComment} />
+                        </button>
                         <button
                           type="button"
                           onClick={(e) => {
@@ -1039,6 +1114,11 @@ export default function ShortsFeedItem({
           </div>
         </div>
       </div>
+  );
+
+  return (
+    <div ref={rootRef} className="relative h-dvh w-full snap-start bg-black">
+      {videoContent}
     </div>
   );
 }
