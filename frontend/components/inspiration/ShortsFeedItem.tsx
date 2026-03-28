@@ -98,7 +98,7 @@ function TimeRing({
         ) : null}
       </svg>
       <div className="absolute inset-[6px] rounded-full bg-black/55 flex items-center justify-center">
-        <span className="text-[10px] font-extrabold text-white">{label}</span>
+        <span className="text-[12px] font-extrabold text-white">{label}</span>
       </div>
     </div>
   );
@@ -141,7 +141,7 @@ function DifficultyRing({
         />
       </svg>
       <div className="absolute inset-[6px] rounded-full bg-black/55 flex items-center justify-center">
-        <span className="text-[10px] font-extrabold text-white">{pct}</span>
+        <span className="text-[12px] font-extrabold text-white">{pct}</span>
       </div>
     </div>
   );
@@ -162,7 +162,6 @@ function formatIngredient(
   s = s.replace(/\bcoarse\b/gi, "");
   s = s.replace(/\bkosher\b/gi, "");
   s = s.replace(/\bfreshly\b/gi, "");
-  s = s.replace(/\bground\b/gi, "");
 
   // Drop common prep/descriptive adjectives to keep it "NYT-short".
   s = s.replace(/\bboneless\b/gi, "");
@@ -229,7 +228,6 @@ function normalizeIngredientName(raw: string): string {
   s = s.replace(/\bcoarse\b/gi, "");
   s = s.replace(/\bkosher\b/gi, "");
   s = s.replace(/\bfreshly\b/gi, "");
-  s = s.replace(/\bground\b/gi, "");
   s = s.replace(/\bthinly\b/gi, "");
 
   s = s.replace(/\bboneless\b/gi, "");
@@ -328,6 +326,8 @@ export default function ShortsFeedItem({
   timeAvailableMinutes,
   experienceLevel,
   selectedModel,
+  ingredientsOpen: overlay2IngredientsOpen,
+  setIngredientsOpen: setOverlay2IngredientsOpen,
 }: {
   recipe: RecipeWithSlug;
   media: MediaForRecipe;
@@ -336,6 +336,8 @@ export default function ShortsFeedItem({
   timeAvailableMinutes: number;
   experienceLevel: ExperienceLevel;
   selectedModel: string;
+  ingredientsOpen: boolean;
+  setIngredientsOpen: (fn: (prev: boolean) => boolean) => void;
 }) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -405,6 +407,28 @@ export default function ShortsFeedItem({
         scrollParent.style.overflowY = "";
       }
     };
+  }, [chatOpen]);
+
+  useEffect(() => {
+    if (!chatOpen) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== " " && e.key !== "Spacebar") return;
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName;
+      const isTextInputLike =
+        tag === "INPUT" ||
+        tag === "TEXTAREA" ||
+        tag === "SELECT" ||
+        Boolean(target?.isContentEditable);
+      if (isTextInputLike) return;
+
+      // Prevent browser "space to scroll" while chat intentionally locks feed scrolling.
+      e.preventDefault();
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, [chatOpen]);
 
   const openChat = useCallback(() => setChatOpen(true), []);
@@ -490,7 +514,9 @@ export default function ShortsFeedItem({
 
   const substitutionByIngredientName: Record<string, string[]> = {
     // Prototype substitutions tuned to our chicken-heavy video set.
-    "Chicken Thighs": ["Chicken Breasts"],
+    "Ground Chicken": ["Chicken Thighs", "Chicken Breasts"],
+    "Chicken Pieces": ["Chicken Thighs", "Chicken Breasts"],
+    "Chicken Thighs": ["Chicken Breasts", "Chicken Pieces"],
     "Chicken Breasts": ["Chicken Thighs"],
     "Chile Flakes": ["Cayenne Pepper"],
     "Red Pepper Flakes": ["Chile Flakes", "Cayenne Pepper"],
@@ -642,6 +668,7 @@ export default function ShortsFeedItem({
             void tryPlayWithSoundPreference();
           } else {
             isInViewRef.current = false;
+            setChatOpen(false);
             pause();
           }
         }
@@ -683,6 +710,31 @@ export default function ShortsFeedItem({
     rows.sort((a, b) => a.order - b.order || a.idx - b.idx);
     return rows;
   })();
+
+  const ingredientStatusSummary = useMemo(() => {
+    const total = overlay2IngredientRows.length;
+    let available = 0;
+    let substitution = 0;
+    let missing = 0;
+
+    for (const row of overlay2IngredientRows) {
+      const accepted = Boolean(acceptedSubstitutions[row.idx]);
+      const status =
+        accepted && row.availability.status === "substitution"
+          ? "available"
+          : row.availability.status;
+
+      if (status === "available") {
+        available += 1;
+      } else if (status === "substitution") {
+        substitution += 1;
+      } else {
+        missing += 1;
+      }
+    }
+
+    return { total, available, substitution, missing };
+  }, [acceptedSubstitutions, overlay2IngredientRows]);
 
   const videoContent = (
     <div
@@ -774,16 +826,23 @@ export default function ShortsFeedItem({
               }`}
             />
 
-            {/* Overlay scrim: bottom-focused for Overlay 1, top/left for Overlay 2 */}
+            {/* Bottom scrim for title/author readability — both overlays */}
             <div
               className="pointer-events-none absolute inset-0"
               style={{
-                background:
-                  isOverlay1
-                    ? "linear-gradient(to top, rgba(0,0,0,0.90) 0%, rgba(0,0,0,0) 80%)"
-                    : "linear-gradient(180deg, rgba(0,0,0,0.56) 0%, rgba(0,0,0,0.34) 28%, rgba(0,0,0,0.12) 55%, rgba(0,0,0,0.00) 80%), linear-gradient(90deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.42) 22%, rgba(0,0,0,0.20) 40%, rgba(0,0,0,0.00) 58%)",
+                background: "linear-gradient(to top, rgba(0,0,0,0.90) 0%, rgba(0,0,0,0) 80%)",
               }}
             />
+            {/* Overlay 2: top-down + left-side scrims — fade with ingredient list */}
+            {!isOverlay1 ? (
+              <div
+                className="pointer-events-none absolute inset-0 transition-opacity duration-300"
+                style={{
+                  opacity: overlay2IngredientsOpen ? 1 : 0,
+                  background: "linear-gradient(180deg, rgba(0,0,0,0.56) 0%, rgba(0,0,0,0.34) 28%, rgba(0,0,0,0.12) 55%, rgba(0,0,0,0.00) 80%), linear-gradient(90deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.42) 22%, rgba(0,0,0,0.20) 40%, rgba(0,0,0,0.00) 58%)",
+                }}
+              />
+            ) : null}
 
             {/* Progress bar (relative to video frame) */}
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1 bg-white/20">
@@ -798,11 +857,82 @@ export default function ShortsFeedItem({
               <div
                 className="absolute left-3 top-3 z-30 w-[56%] max-w-[210px] pointer-events-auto transition-all duration-300 rounded-xl"
               >
-                <div className="relative z-10 w-full px-3 py-2 text-left text-sm font-extrabold tracking-wide text-white/95">
-                  Ingredients
-                </div>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOverlay2IngredientsOpen((prev) => !prev);
+                  }}
+                  className={`relative z-10 w-full px-3 py-2 text-left text-base font-extrabold tracking-wide text-white/95 flex flex-col gap-1.5 transition-all duration-300 rounded-lg ${
+                    overlay2IngredientsOpen
+                      ? "bg-transparent"
+                      : "bg-black/50 backdrop-blur"
+                  }`}
+                >
+                  <span className="flex w-full items-center justify-between">
+                    <span className="flex items-center gap-2">
+                      <span>Ingredients</span>
+                      {!overlay2IngredientsOpen && ingredientStatusSummary.total > 0 ? (
+                        <span className="flex items-center gap-1">
+                          <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-lime-400 px-1 text-[11px] font-black leading-none text-black">
+                            {ingredientStatusSummary.available}
+                          </span>
+                          <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-400 px-1 text-[11px] font-black leading-none text-black">
+                            {ingredientStatusSummary.substitution}
+                          </span>
+                          <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[11px] font-black leading-none text-white">
+                            {ingredientStatusSummary.missing}
+                          </span>
+                        </span>
+                      ) : null}
+                    </span>
+                    <FontAwesomeIcon
+                      icon={overlay2IngredientsOpen ? faChevronUp : faChevronDown}
+                      className="w-2.5 h-2.5 text-white transition-transform duration-300"
+                    />
+                  </span>
+                  {/* Segmented status bar when collapsed */}
+                  {!overlay2IngredientsOpen && ingredientStatusSummary.total > 0 ? (
+                    <div className="flex w-full h-1 rounded-full overflow-hidden gap-px">
+                      {ingredientStatusSummary.available > 0 && (
+                        <div
+                          className="h-full rounded-full bg-lime-400"
+                          style={{
+                            flex:
+                              ingredientStatusSummary.available /
+                              ingredientStatusSummary.total,
+                          }}
+                        />
+                      )}
+                      {ingredientStatusSummary.substitution > 0 && (
+                        <div
+                          className="h-full rounded-full bg-amber-400"
+                          style={{
+                            flex:
+                              ingredientStatusSummary.substitution /
+                              ingredientStatusSummary.total,
+                          }}
+                        />
+                      )}
+                      {ingredientStatusSummary.missing > 0 && (
+                        <div
+                          className="h-full rounded-full bg-rose-400"
+                          style={{
+                            flex:
+                              ingredientStatusSummary.missing /
+                              ingredientStatusSummary.total,
+                          }}
+                        />
+                      )}
+                    </div>
+                  ) : null}
+                </button>
 
-                <div className="relative z-10 max-h-[70dvh] overflow-y-auto">
+                <div
+                  className={`relative z-10 overflow-hidden transition-all duration-300 ease-out ${
+                    overlay2IngredientsOpen ? "max-h-[70dvh] opacity-100" : "max-h-0 opacity-0"
+                  }`}
+                >
                   <ul className="px-3 pb-3 mt-1 space-y-1">
                     {overlay2IngredientRows.map(({ idx, line, availability }) => {
                       const hasAcceptedSubstitution = Boolean(acceptedSubstitutions[idx]);
@@ -846,7 +976,7 @@ export default function ShortsFeedItem({
                                 [idx]: !Boolean(prev[idx]),
                               }));
                             }}
-                            className={`group inline-flex items-center gap-2 text-sm font-semibold transition-all duration-300 ${colorClass} ${
+                            className={`group inline-flex items-center gap-2 text-base font-semibold transition-all duration-300 ${colorClass} ${
                               availability.status === "substitution" &&
                               !hasAcceptedSubstitution
                                 ? "cursor-pointer"
@@ -912,10 +1042,10 @@ export default function ShortsFeedItem({
                   <div className="sticky top-0 z-10 bg-black/70 backdrop-blur px-4 py-3 border-b border-white/10">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <div className="text-base font-extrabold leading-snug line-clamp-2">
+                        <div className="text-lg font-extrabold leading-snug line-clamp-2">
                           {recipe.title}
                         </div>
-                        <div className="mt-1 text-sm text-white/80 truncate">
+                        <div className="mt-1 text-base text-white/80 truncate">
                           By {recipe.author} · {recipe.total_time_minutes} min
                         </div>
                       </div>
@@ -925,7 +1055,7 @@ export default function ShortsFeedItem({
                           e.stopPropagation();
                           setRecipeOverlayOpen(false);
                         }}
-                        className="shrink-0 rounded-full px-3 py-1.5 text-sm font-semibold bg-white/15 hover:bg-white/25 text-white"
+                        className="shrink-0 rounded-full px-3 py-1.5 text-base font-semibold bg-white/15 hover:bg-white/25 text-white"
                         aria-label="Close recipe"
                       >
                         Close
@@ -935,7 +1065,7 @@ export default function ShortsFeedItem({
 
                   <div className="px-4 py-4">
                     <div
-                      className={`flex items-center justify-between text-xs font-extrabold tracking-wide text-white/80 px-1 rounded ${
+                      className={`flex items-center justify-between text-sm font-extrabold tracking-wide text-white/80 px-1 rounded ${
                         recipeIngredientsOpen ? "shadow-md bg-black/30" : "shadow-sm bg-black/25"
                       }`}
                     >
@@ -962,17 +1092,17 @@ export default function ShortsFeedItem({
                         recipeIngredientsOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
                       }`}
                     >
-                      <ul className="mt-2 space-y-1 text-sm text-white/90">
+                      <ul className="mt-2 space-y-1 text-base text-white/90">
                         {recipe.ingredients.map((ing, idx) => (
                           <li key={idx}>{formatIngredient(ing)}</li>
                         ))}
                       </ul>
                     </div>
 
-                    <div className="mt-4 text-xs font-extrabold tracking-wide text-white/80">
+                    <div className="mt-4 text-sm font-extrabold tracking-wide text-white/80">
                       Steps
                     </div>
-                    <ol className="mt-2 space-y-3 text-sm text-white/90">
+                    <ol className="mt-2 space-y-3 text-base text-white/90">
                       {recipe.steps
                         .slice()
                         .sort((a, b) => a.step_number - b.step_number)
@@ -997,18 +1127,18 @@ export default function ShortsFeedItem({
                   <>
                     <div className="flex items-start justify-between gap-4">
                       <div className="min-w-0">
-                        <div className="text-lg font-semibold leading-snug line-clamp-2">
+                        <div className="text-xl font-semibold leading-snug line-clamp-2">
                           {recipe.title}
                         </div>
-                        <div className="mt-1 text-sm text-white/80 truncate">{byline}</div>
-                        <div className="mt-2 flex items-center gap-3 text-sm">
+                        <div className="mt-1 text-base text-white/80 truncate">{byline}</div>
+                        <div className="mt-2 flex items-center gap-3 text-base">
                           <span className="font-semibold">5★</span>
                           <span className="text-white/80">{meta}</span>
                         </div>
                       </div>
                     </div>
                     {needsUserGestureForSound ? (
-                      <div className="mt-2 text-xs text-white/85">Tap to enable sound</div>
+                      <div className="mt-2 text-sm text-white/85">Tap to enable sound</div>
                     ) : null}
                   </>
                 ) : null}
@@ -1016,15 +1146,15 @@ export default function ShortsFeedItem({
                   <div className="mb-2">
                     <div className="grid grid-cols-[1fr_auto] items-center gap-3">
                       <div>
-                        <div className="text-lg font-semibold leading-snug line-clamp-2">
+                        <div className="text-xl font-semibold leading-snug line-clamp-2">
                           {recipe.title}
                         </div>
-                        <div className="mt-1 flex items-center gap-2 text-sm text-white/80 truncate">
+                        <div className="mt-1 flex items-center gap-2 text-base text-white/80 truncate">
                           <span className="truncate">{byline}</span>
                           <span className="shrink-0 text-white font-semibold">5★</span>
                         </div>
                         {needsUserGestureForSound ? (
-                          <div className="mt-2 text-xs text-white/85">
+                          <div className="mt-2 text-sm text-white/85">
                             Tap to enable sound
                           </div>
                         ) : null}
@@ -1062,7 +1192,7 @@ export default function ShortsFeedItem({
                 {isOverlay1 ? (
                   <div className="relative pointer-events-auto mt-3 flex items-center gap-3">
                     <div
-                      className={`absolute left-0 right-0 bottom-full mb-2 px-1 text-sm font-semibold text-white/95 transition-all duration-300 ${
+                      className={`absolute left-0 right-0 bottom-full mb-2 px-1 text-base font-semibold text-white/95 transition-all duration-300 ${
                         ingredientsOpen
                           ? "opacity-100 translate-y-0"
                           : "opacity-0 translate-y-2"
@@ -1073,7 +1203,7 @@ export default function ShortsFeedItem({
                       onTouchStart={(e) => e.stopPropagation()}
                       onTouchMove={(e) => e.stopPropagation()}
                     >
-                      <div className="mb-1 text-base font-extrabold tracking-wide text-white">
+                      <div className="mb-1 text-lg font-extrabold tracking-wide text-white">
                         Ingredients
                       </div>
                       <ul className="space-y-1">
@@ -1090,7 +1220,7 @@ export default function ShortsFeedItem({
                         e.stopPropagation();
                         setIngredientsOpen((prev) => !prev);
                       }}
-                      className="rounded-full px-4 py-2 text-sm font-semibold bg-white/15 hover:bg-white/25 backdrop-blur"
+                      className="rounded-full px-4 py-2 text-base font-semibold bg-white/15 hover:bg-white/25 backdrop-blur"
                     >
                       {ingredientsOpen ? "Hide Ingredients" : "See Ingredients"}
                     </button>
@@ -1101,7 +1231,7 @@ export default function ShortsFeedItem({
                         pause();
                         setRecipeOverlayOpen(true);
                       }}
-                      className="rounded-full px-4 py-2 text-sm font-semibold bg-white text-black hover:bg-zinc-100"
+                      className="rounded-full px-4 py-2 text-base font-semibold bg-white text-black hover:bg-zinc-100"
                     >
                       Go to Recipe
                     </button>

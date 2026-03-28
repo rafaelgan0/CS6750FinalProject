@@ -10,7 +10,14 @@ export const OVERLAY2_GROUPS: ChecklistGroup[] = [
   },
   {
     title: "Protein",
-    items: ["Chicken Pieces", "Chicken Thighs", "Chicken Breasts", "Eggs", "Egg Yolks"],
+    items: [
+      "Chicken Pieces",
+      "Ground Chicken",
+      "Chicken Thighs",
+      "Chicken Breasts",
+      "Eggs",
+      "Egg Yolks",
+    ],
   },
   {
     title: "Dairy",

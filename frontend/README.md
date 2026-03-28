@@ -84,6 +84,18 @@ If Ollama runs on a different host or port, set the `OLLAMA_HOST` environment va
 OLLAMA_HOST=http://192.168.1.50:11434 npm run dev
 ```
 
+## Vercel / hosted deployment (AI chat)
+
+Ollama does not run on Vercel. In production, chat is **off by default**: when `VERCEL=1` (set automatically on Vercel), `/api/chat` streams a short “not available” reply instead of calling Ollama. Overlays and the rest of the feed work normally; clone the repo and run Ollama locally for full chat.
+
+| Variable | Behavior |
+|----------|----------|
+| `VERCEL` | On Vercel this is `1`, which disables Ollama unless you opt in below. |
+| `OLLAMA_CHAT_ENABLED` | Set to `true` only if you host Ollama elsewhere and set `OLLAMA_HOST` to that URL. Otherwise omit it on Vercel. |
+| `OLLAMA_HOST` | Base URL of Ollama (e.g. `https://your-ollama.example.com`), no trailing slash. |
+
+For local development, copy `.env.example` to `.env.local` and set `OLLAMA_CHAT_ENABLED=true` (or delete the line—local dev enables chat by default when `VERCEL` is unset).
+
 ## Project Structure
 
 ```
@@ -104,7 +116,8 @@ CS6750FinalProject/
 │   │   └── overlay2ChecklistData.ts
 │   ├── lib/
 │   │   ├── recipes.ts           # Recipe JSON loader
-│   │   └── media.ts             # Media file mapping
+│   │   ├── media.ts             # Media file mapping
+│   │   └── ollama-chat-enabled.ts  # Vercel vs local chat toggle
 │   └── public/
 │       ├── images/              # Recipe thumbnail images
 │       └── videos/              # Recipe video files

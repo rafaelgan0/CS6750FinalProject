@@ -11,7 +11,7 @@
     "Ginger",
     "Garlic",
     "Jalapeno",
-    "Chicken pieces",
+    "Ground chicken",
     "Cilantro",
     "Fish Sauce",
     "Salt",
@@ -40,7 +40,7 @@
   "steps": [
     {
       "step_number": 1,
-      "text": "Grate ginger, garlic, and jalapeno; mix with chicken, cilantro, fish sauce, and salt. Form into meatballs."
+      "text": "Grate ginger, garlic, and jalapeno; mix with ground chicken, cilantro, fish sauce, and salt. Form into meatballs."
     },
     {
       "step_number": 2,

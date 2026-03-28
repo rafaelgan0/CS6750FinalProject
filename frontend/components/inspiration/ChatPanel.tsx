@@ -22,6 +22,14 @@ function stripThinkTags(raw: string): { visible: string; stillThinking: boolean 
   return { visible, stillThinking: visible.length === 0 && raw.length > 0 };
 }
 
+function normalizePromptIngredientName(raw: string): string {
+  return raw
+    .replace(/\([^)]*\)/g, "")
+    .split(",")[0]
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function buildSystemPrompt(
   recipe: RecipeWithSlug,
   context: {
@@ -41,19 +49,61 @@ function buildSystemPrompt(
     .map((s) => `${s.step_number}. ${s.text}`)
     .join("\n");
 
-  const available: string[] = [];
-  const missing: string[] = [];
-  for (const [key, checked] of Object.entries(context.checkedItems)) {
-    const name = key.split(":")[1];
-    if (!name) continue;
-    if (checked) available.push(name);
-    else missing.push(name);
-  }
+  const userIngredientList = Object.entries(context.checkedItems)
+    .filter(([, checked]) => checked)
+    .map(([key]) => key.split(":")[1] ?? key)
+    .map((name) => name.trim())
+    .filter(Boolean);
 
-  const subLines: string[] = [];
+  const userIngredientSet = new Set(
+    userIngredientList.map((name) => name.toLocaleLowerCase()),
+  );
+
+  const rawRecipeIngredients =
+    recipe.shorts_ingredients?.length
+      ? recipe.shorts_ingredients
+      : recipe.ingredients.map((i) => i.item);
+  const recipeIngredients = Array.from(
+    new Set(
+      rawRecipeIngredients
+        .map(normalizePromptIngredientName)
+        .filter(Boolean),
+    ),
+  );
+
+  const recipeHave = recipeIngredients.filter((name) =>
+    userIngredientSet.has(name.toLocaleLowerCase()),
+  );
+  const recipeMissing = recipeIngredients.filter(
+    (name) => !userIngredientSet.has(name.toLocaleLowerCase()),
+  );
+
+  const substitutionsByIngredient = new Map<string, string[]>();
   for (const [ingredient, subs] of Object.entries(context.substitutions)) {
-    subLines.push(`- ${ingredient} can be substituted with: ${subs.join(", ")}`);
+    substitutionsByIngredient.set(ingredient.toLocaleLowerCase(), subs);
   }
+  const availableSubstitutionsByMissing = new Map<string, string[]>();
+  for (const ingredient of recipeMissing) {
+    const subs = substitutionsByIngredient.get(ingredient.toLocaleLowerCase()) ?? [];
+    const availableSubs = subs.filter((sub) =>
+      userIngredientSet.has(sub.toLocaleLowerCase()),
+    );
+    if (availableSubs.length > 0) {
+      availableSubstitutionsByMissing.set(ingredient, availableSubs);
+    }
+  }
+  const subLines = recipeMissing.flatMap((ingredient) => {
+    const availableSubs = availableSubstitutionsByMissing.get(ingredient) ?? [];
+    return availableSubs.length > 0
+      ? [`- ${ingredient} can be substituted with: ${availableSubs.join(", ")}`]
+      : [];
+  });
+  const missingStatusLines = recipeMissing.map((ingredient) => {
+    const availableSubs = availableSubstitutionsByMissing.get(ingredient) ?? [];
+    return availableSubs.length > 0
+      ? `- ${ingredient}: missing; listed substitutions: ${availableSubs.join(", ")}`
+      : `- ${ingredient}: missing; listed substitutions: none available from user pantry`;
+  });
 
   return [
     `You are a friendly, concise cooking assistant helping someone decide what to cook.`,
@@ -70,13 +120,22 @@ function buildSystemPrompt(
     `USER CONTEXT:`,
     `- Available time: ${context.timeAvailableMinutes} minutes`,
     `- Experience level: ${context.experienceLevel}`,
-    `- Ingredients they have: ${available.join(", ") || "none specified"}`,
-    `- Ingredients they're missing: ${missing.join(", ") || "none"}`,
+    `- User ingredient list: ${userIngredientList.join(", ") || "none provided"}`,
+    `- Recipe ingredients they have: ${recipeHave.join(", ") || "none"}`,
+    `- Recipe ingredients missing: ${recipeMissing.join(", ") || "none"}`,
     ``,
+    ...(missingStatusLines.length > 0
+      ? [`MISSING INGREDIENT STATUS:`, ...missingStatusLines, ``]
+      : []),
     ...(subLines.length > 0
       ? [`AVAILABLE SUBSTITUTIONS:`, ...subLines, ``]
       : []),
-    `Answer questions about this recipe. Suggest substitutions if they're missing ingredients. Be encouraging and keep answers short unless asked for detail.`,
+    `Answer questions about this recipe. Be encouraging and keep answers short unless asked for detail.`,
+    `When the user asks if they can make/cook this recipe, first state the missing recipe ingredients from MISSING INGREDIENT STATUS (if any), then give your recommendation.`,
+    `Use only substitutions listed in AVAILABLE SUBSTITUTIONS. Do not invent substitutions that are not listed.`,
+    `If a missing ingredient has no listed substitution, say that clearly.`,
+    `Never imply all ingredients are available when any item is listed as missing.`,
+    `If the user asks whether they can make the recipe without a missing ingredient, answer directly (yes/no/depends) and briefly explain the tradeoff in taste/texture.`,
     `IMPORTANT: Do NOT wrap your response in <think> tags or show your reasoning process. Respond directly and concisely.`,
   ].join("\n");
 }
